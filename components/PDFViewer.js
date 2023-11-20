@@ -77,8 +77,8 @@ const PDFViewer = ({ pdfFile }) => {
       </Worker>
 
       {/* Signature Canvas */}
-      <div className=" bottom-0 left-0 p-4">
-        <SignatureCanvas ref={signatureRef} canvasProps={{ width: 400, height: 200, className: 'border' }} />
+      <div className=" bottom-0 left-0 p-4 ">
+        <SignatureCanvas  ref={signatureRef} canvasProps={{ width: 400, height: 200, className: 'border border border-black' }} />
         <div className="mt-2">
           <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={clearSignature}>
             Clear Signature
@@ -87,7 +87,7 @@ const PDFViewer = ({ pdfFile }) => {
             Save Signature
           </button>
           <button
-          className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+          className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded ml-2"
           onClick={attachSignatureToPDF}
         >
           Attach to PDF
@@ -101,7 +101,7 @@ const PDFViewer = ({ pdfFile }) => {
   <Draggable onStop={handleDragStop}>
     <div
       ref={draggableRef}
-      className="w-32 h-32 bottom-4 right-4 bg-white p-4 rounded border shadow-md"
+      className="w-32 h-32 bottom-4 right-4 p-4 rounded border border-black bg-white bg-opacity-20"
     >
       <img src={signatureImage} alt="Signature" className="w-32 h-16" />
     </div>
