@@ -20,8 +20,6 @@ const PDFViewer = ({ pdfFile }) => {
   const saveSignature = () => {
     const signatureDataUrl = signatureRef.current.toDataURL();
     setSignatureImage(signatureDataUrl);
-  
-    // Check if draggableRef.current is not null before accessing its properties
     if (draggableRef.current) {
       draggableRef.current.style.display = 'block';
     }
@@ -35,14 +33,12 @@ const PDFViewer = ({ pdfFile }) => {
   
     const pdf = new jsPDF();
   
-    // Assuming the original PDF is one page
     const pdfWidth = 210;
     const pdfHeight = 297;
   
     // Add the original PDF content
     pdf.addImage(pdfFile, 'JPEG', 0, 0, pdfWidth, pdfHeight);
   
-    // Calculate the position of the signature based on the draggable window position
     const draggableRect = draggableRef.current.getBoundingClientRect();
     const pdfRect = document.querySelector('.rpv-core__viewer').getBoundingClientRect();
   
@@ -52,13 +48,11 @@ const PDFViewer = ({ pdfFile }) => {
     // Add the signature to the same page
     pdf.addImage(signatureImage, 'PNG', posX, posY, 50, 25);
   
-    // Save or display the new PDF
     pdf.save('signed_document.pdf');
   };
   
 
   const handleDragStop = () => {
-    // You can handle any additional actions when the draggable window stops being dragged
   };
   const downloadOriginalPDF = () => {
     const link = document.createElement('a');
@@ -95,8 +89,6 @@ const PDFViewer = ({ pdfFile }) => {
         </div>
       </div>
 
-      {/* Draggable Signature Window */}
-{/* Draggable Signature Window */}
 {signatureImage && (
   <Draggable onStop={handleDragStop}>
     <div
@@ -109,7 +101,6 @@ const PDFViewer = ({ pdfFile }) => {
 )}
 
 
-      {/* Attach to PDF button */}
       <div className="">
 
       </div>
