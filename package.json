@@ -10,7 +10,11 @@
     "prod": "next build && next export -o build"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/material": "^5.14.18",
     "@react-pdf-viewer/core": "^3.12.0",
+    "@react-pdf-viewer/toolbar": "^3.12.0",
     "@reduxjs/toolkit": "^1.9.5",
     "autoprefixer": "10.4.14",
     "axios": "^1.5.0",
@@ -25,14 +29,16 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-draggable": "^4.4.6",
+    "react-dropzone": "^14.2.3",
     "react-icons": "^4.8.0",
     "react-modal": "^3.16.1",
     "react-pdf": "^7.5.1",
+    "react-pdf-to-image": "^1.0.2",
     "react-redux": "^8.0.5",
     "react-resizable": "^3.0.5",
     "react-signature-canvas": "^1.0.6",
     "sass": "^1.62.1",
-    "tailwindcss": "3.3.2"
+    "tailwindcss": "^3.3.2"
   },
   "devDependencies": {
     "file-loader": "^6.2.0"
