@@ -21,7 +21,8 @@ const Home = () => {
       <Typography variant="h1" gutterBottom>
         PDF Viewer
       </Typography>
-      <Dropzone onDrop={handleDrop} accept=".pdf">
+      <Dropzone onDrop={handleDrop} accept={['.pdf']}>
+
         {({ getRootProps, getInputProps }) => (
           <Box
             {...getRootProps()}

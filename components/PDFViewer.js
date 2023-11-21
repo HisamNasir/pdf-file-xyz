@@ -5,8 +5,7 @@ import { pdfjs } from 'react-pdf';
 import SignatureCanvas from 'react-signature-canvas';
 import Draggable from 'react-draggable';
 import jsPDF from 'jspdf';
-
-pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
+import { PDFDocument, StandardFonts, rgb } from 'pdf-lib'
 
 const PDFViewer = ({ pdfFile }) => {
   const [signatureImage, setSignatureImage] = useState(null);
@@ -20,39 +19,53 @@ const PDFViewer = ({ pdfFile }) => {
   const saveSignature = () => {
     const signatureDataUrl = signatureRef.current.toDataURL();
     setSignatureImage(signatureDataUrl);
+  
+    // Check if draggableRef.current is not null before accessing its properties
     if (draggableRef.current) {
       draggableRef.current.style.display = 'block';
     }
   };
   
-  const attachSignatureToPDF = () => {
+  const attachSignatureToPDF = async () => {
     if (!signatureImage) {
       alert('Please add a signature before attaching to PDF.');
       return;
     }
   
-    const pdf = new jsPDF();
+    try {
+      const pdfBytes = await fetch(pdfFile).then((res) => res.arrayBuffer());
+      const pdfDoc = await PDFDocument.load(pdfBytes);
   
-    const pdfWidth = 210;
-    const pdfHeight = 297;
+      // Assuming the original PDF is one page
+      const [page] = pdfDoc.getPages();
   
-    // Add the original PDF content
-    pdf.addImage(pdfFile, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+      // Calculate the position of the signature based on the draggable window position
+      const draggableRect = draggableRef.current.getBoundingClientRect();
+      const pdfRect = document.querySelector('.rpv-core__viewer').getBoundingClientRect();
   
-    const draggableRect = draggableRef.current.getBoundingClientRect();
-    const pdfRect = document.querySelector('.rpv-core__viewer').getBoundingClientRect();
+      const posX = (draggableRect.left - pdfRect.left) * (page.getWidth() / pdfRect.width);
+      const posY = (draggableRect.top - pdfRect.top) * (page.getHeight() / pdfRect.height);
   
-    const posX = (draggableRect.left - pdfRect.left) * (pdfWidth / pdfRect.width);
-    const posY = (draggableRect.top - pdfRect.top) * (pdfHeight / pdfRect.height);
+      // Add the signature to the same page
+      const pngImage = await pdfDoc.embedPng(signatureImage);
+      page.drawImage(pngImage, { x: posX, y: page.getHeight() - posY - 25, width: 50, height: 25 });
   
-    // Add the signature to the same page
-    pdf.addImage(signatureImage, 'PNG', posX, posY, 50, 25);
+      // Save or display the new PDF
+      const updatedPdfBytes = await pdfDoc.save();
+      const blob = new Blob([updatedPdfBytes], { type: 'application/pdf' });
   
-    pdf.save('signed_document.pdf');
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'signed_document.pdf';
+      link.click();
+    } catch (error) {
+      console.error('Error attaching signature to PDF:', error);
+    }
   };
   
 
   const handleDragStop = () => {
+    // You can handle any additional actions when the draggable window stops being dragged
   };
   const downloadOriginalPDF = () => {
     const link = document.createElement('a');
@@ -89,6 +102,8 @@ const PDFViewer = ({ pdfFile }) => {
         </div>
       </div>
 
+      {/* Draggable Signature Window */}
+{/* Draggable Signature Window */}
 {signatureImage && (
   <Draggable onStop={handleDragStop}>
     <div
@@ -101,6 +116,7 @@ const PDFViewer = ({ pdfFile }) => {
 )}
 
 
+      {/* Attach to PDF button */}
       <div className="">
 
       </div>
