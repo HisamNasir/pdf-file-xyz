@@ -20,7 +20,6 @@ const PDFViewer = ({ pdfFile }) => {
     const signatureDataUrl = signatureRef.current.toDataURL();
     setSignatureImage(signatureDataUrl);
   
-    // Check if draggableRef.current is not null before accessing its properties
     if (draggableRef.current) {
       draggableRef.current.style.display = 'block';
     }
@@ -36,21 +35,17 @@ const PDFViewer = ({ pdfFile }) => {
       const pdfBytes = await fetch(pdfFile).then((res) => res.arrayBuffer());
       const pdfDoc = await PDFDocument.load(pdfBytes);
   
-      // Assuming the original PDF is one page
       const [page] = pdfDoc.getPages();
   
-      // Calculate the position of the signature based on the draggable window position
       const draggableRect = draggableRef.current.getBoundingClientRect();
       const pdfRect = document.querySelector('.rpv-core__viewer').getBoundingClientRect();
   
       const posX = (draggableRect.left - pdfRect.left) * (page.getWidth() / pdfRect.width);
       const posY = (draggableRect.top - pdfRect.top) * (page.getHeight() / pdfRect.height);
   
-      // Add the signature to the same page
       const pngImage = await pdfDoc.embedPng(signatureImage);
       page.drawImage(pngImage, { x: posX, y: page.getHeight() - posY - 25, width: 50, height: 25 });
   
-      // Save or display the new PDF
       const updatedPdfBytes = await pdfDoc.save();
       const blob = new Blob([updatedPdfBytes], { type: 'application/pdf' });
   
@@ -65,7 +60,6 @@ const PDFViewer = ({ pdfFile }) => {
   
 
   const handleDragStop = () => {
-    // You can handle any additional actions when the draggable window stops being dragged
   };
   const downloadOriginalPDF = () => {
     const link = document.createElement('a');
@@ -83,7 +77,6 @@ const PDFViewer = ({ pdfFile }) => {
         <Viewer fileUrl={pdfFile} />
       </Worker>
 
-      {/* Signature Canvas */}
       <div className=" bottom-0 left-0 p-4 ">
         <SignatureCanvas  ref={signatureRef} canvasProps={{ width: 400, height: 200, className: 'border border border-black' }} />
         <div className="mt-2">
@@ -102,21 +95,18 @@ const PDFViewer = ({ pdfFile }) => {
         </div>
       </div>
 
-      {/* Draggable Signature Window */}
-{/* Draggable Signature Window */}
 {signatureImage && (
   <Draggable onStop={handleDragStop}>
     <div
       ref={draggableRef}
-      className="w-32 h-32 bottom-4 right-4 p-4 rounded border border-black bg-white bg-opacity-20"
+      className=" w-56 h-356 bottom-4 right-4 p-4 rounded border border-black bg-white bg-opacity-20"
     >
-      <img src={signatureImage} alt="Signature" className="w-32 h-16" />
+      <img src={signatureImage} alt="Signature" className="w-56 h-56" />
     </div>
   </Draggable>
 )}
 
 
-      {/* Attach to PDF button */}
       <div className="">
 
       </div>
