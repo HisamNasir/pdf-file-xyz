@@ -17,8 +17,8 @@ const Home = () => {
   };
 
   return (
-    <Container>
-      <Typography variant="h1" gutterBottom>
+    <Container className=' space-y-4 my-16'>
+      <Typography variant="h3" gutterBottom>
         PDF Viewer
       </Typography>
       <Dropzone onDrop={handleDrop} accept={['.pdf']}>
@@ -40,6 +40,7 @@ const Home = () => {
         )}
       </Dropzone>
       {selectedFile && <PDFViewer pdfFile={selectedFile} />}
+
     </Container>
   );
 };
