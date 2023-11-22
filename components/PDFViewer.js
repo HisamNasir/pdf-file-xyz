@@ -20,6 +20,13 @@ const PDFViewer = ({ pdfFile }) => {
   const draggableRef = useRef(null);
   const [showDownloadButton, setShowDownloadButton] = useState(false);
 
+  const [resizableBoxSize, setResizableBoxSize] = useState({ width: 200, height: 100 });
+
+  // ...
+
+  const handleResize = (event, { size }) => {
+    setResizableBoxSize({ width: size.width, height: size.height });
+  };
   const clearSignature = () => {
     signatureRef.current.clear();
   };
@@ -29,7 +36,6 @@ const PDFViewer = ({ pdfFile }) => {
     setSignatureImage(signatureDataUrl);
 
     if (draggableRef.current) {
-      draggableRef.current.style.display = "block";
       setShowDownloadButton(true);
       setModalOpen(false);
     }
@@ -62,12 +68,15 @@ const PDFViewer = ({ pdfFile }) => {
         (draggableRect.top - pdfRect.top + posYOffset) *
         (page.getHeight() / pdfRect.height);
   
-      const pngImage = await pdfDoc.embedPng(signatureImage);
-      page.drawImage(pngImage, {
-        x: posX - 100,
-        y: page.getHeight() - posY - 180,
-      });
-  
+        const { width, height } = resizableBoxSize;
+
+        const pngImage = await pdfDoc.embedPng(signatureImage);
+        page.drawImage(pngImage, {
+          x: posX - 25,
+          y: page.getHeight() - posY - height,
+          width,
+          height,
+        });
       const updatedPdfBytes = await pdfDoc.save();
       const blob = new Blob([updatedPdfBytes], { type: "application/pdf" });
   
@@ -154,9 +163,14 @@ const PDFViewer = ({ pdfFile }) => {
               ref={draggableRef}
               className=" bottom-4 right-4 p-4 rounded border absolute resize-y  max-w-md border-black bg-white bg-opacity-20"
             >
-   
+              <ResizableBox
+                className="rounded border absolute resize-y max-w-md border-black bg-white bg-opacity-20"
+                width={resizableBoxSize.width}
+                height={resizableBoxSize.height}
+                onResize={handleResize}
+              >
                 <img src={signatureImage} alt="Signature" />
- 
+              </ResizableBox>
             </div>
           </Draggable>
 
