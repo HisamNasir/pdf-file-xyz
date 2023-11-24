@@ -43,47 +43,46 @@ const PDFViewer = ({ pdfFile }) => {
 
   const handleDragStop = () => {};
 
-  const downloadSignedPDF = async (pageNumber) => {
+
+  const downloadSignedPDF = async () => {
     try {
       const pdfBytes = await fetch(pdfFile).then((res) => res.arrayBuffer());
       const pdfDoc = await PDFDocument.load(pdfBytes);
-  
-      let posYOffset = 0;
-  
-      for (let i = 0; i < pageNumber - 1; i++) {
-        const currentPage = pdfDoc.getPage(i);
-        posYOffset += currentPage.getHeight();
-      }
-  
-      const [page] = pdfDoc.getPages({ index: pageNumber - 1 });
   
       const draggableRect = draggableRef.current.getBoundingClientRect();
       const pdfRect = document
         .querySelector(".rpv-core__viewer")
         .getBoundingClientRect();
   
-      const posX =
-        (draggableRect.left - pdfRect.left) * (page.getWidth() / pdfRect.width);
-      const posY =
-        (draggableRect.top - pdfRect.top + posYOffset) *
-        (page.getHeight() / pdfRect.height);
+      const { width, height } = resizableBoxSize;
   
-        const { width, height } = resizableBoxSize;
-
-        const pngImage = await pdfDoc.embedPng(signatureImage);
-        page.drawImage(pngImage, {
-          x: posX - 25,
-          y: page.getHeight() - posY - height,
-          width,
-          height,
-        });
+      const pngImage = await pdfDoc.embedPng(signatureImage);
+  
+      const pageNumber = Math.floor(
+        ((draggableRect.top - pdfRect.top) / pdfRect.height) * pdfDoc.getPageCount()
+      ) + 1;
+  
+      const page = pdfDoc.getPage(pageNumber - 1);
+  
+      const posX =
+        ((draggableRect.left - pdfRect.left) / pdfRect.width) * page.getWidth();
+      const posY =
+        ((draggableRect.top - pdfRect.top) / pdfRect.height) * (page.getHeight()-150);
+  
+      page.drawImage(pngImage, {
+        x: posX ,
+        y: page.getHeight()-posY-height,
+        width,
+        height,
+      });
+  
       const updatedPdfBytes = await pdfDoc.save();
       const blob = new Blob([updatedPdfBytes], { type: "application/pdf" });
   
       // Download the updated PDF
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
-      link.download = `signed_document_page_${pageNumber}.pdf`;
+      link.download = `signed_document.pdf`;
       link.click();
     } catch (error) {
       console.error("Error downloading signed PDF:", error);
@@ -91,8 +90,10 @@ const PDFViewer = ({ pdfFile }) => {
   };
   
 
+
+
   return (
-    <div>
+    <div className="h-full relative">
       <Worker
         workerUrl={`https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`}
       >
