@@ -67,7 +67,7 @@ const PDFViewer = ({ pdfFile }) => {
       const posX =
         ((draggableRect.left - pdfRect.left) / pdfRect.width) * page.getWidth();
       const posY =
-        ((draggableRect.top - pdfRect.top) / pdfRect.height) * (page.getHeight()-150);
+        ((draggableRect.top - pdfRect.top) / pdfRect.height) * (page.getHeight()-550);
   
       page.drawImage(pngImage, {
         x: posX ,
